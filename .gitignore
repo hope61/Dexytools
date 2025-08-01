@@ -1,0 +1,11 @@
+.env
+/Dexychecker/bin
+/Dexychecker/data
+/Dexychecker/include
+/Dexychecker/lib
+/Dexychecker/bot.log
+/Dexychecker/pyvenv.cfg
+/Newpaidpairs/bin
+/Newpaidpairs/include
+/Newpaidpairs/lib
+/Newpaidpairs/pyvenv.cfg

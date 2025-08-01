@@ -1,0 +1,33 @@
+services:
+  dexychecker_bot:
+    build:
+      context: ./Dexychecker
+      dockerfile: Dockerfile
+    container_name: dexychecker_bot
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      DEXYCHECKER_BOT_API: $DEXYCHECKER_BOT_API
+    volumes:
+      - ./Dexychecker/data:/app/data
+    networks:
+      - custom_network
+
+  newpaidpairs_bot:
+    build:
+      context: ./Newpaidpairs
+      dockerfile: Dockerfile
+    container_name: newpaidpairs_bot
+    restart: always
+    environment:
+      NEWPAIDPAIRS: $NEWPAIDPAIRS
+    networks:
+      - custom_network
+
+networks:
+  custom_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
