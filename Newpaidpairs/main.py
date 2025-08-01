@@ -8,6 +8,7 @@ from telegram.ext import (
 )
 import aiohttp
 import asyncio
+from datetime import datetime, timedelta
 
 # Configuration Constants
 # Ensure the correct environment variable is used
@@ -180,7 +181,11 @@ async def send_latest_coin(bot, coin, token_details):
     market_cap_str = f"{market_cap:,}" if isinstance(market_cap, (int, float)) else market_cap
     volume1h = token_details.get('volume1h', '0')  # 1-hour volume
     boosts_active = token_details.get('boosts_active', 0)
-    created_ago = get_time_ago(token_details.get('created_at', 0))
+    created_timestamp = token_details.get('created_at', 0)
+    is_older_than_3_days = False
+    if created_timestamp:
+        created_dt = datetime.fromtimestamp(created_timestamp)
+        is_older_than_3_days = datetime.now() - created_dt > timedelta(days=3)
 
     # Define the buttons without social links
     keyboard_buttons = [
@@ -214,7 +219,7 @@ async def send_latest_coin(bot, coin, token_details):
     # Format the message using Markdown for better readability
     message_text = (
         f"🔗 **Dexscreener:** [Visit Here]({url})\n"
-        f"⏳ **Created:** {created_ago}\n"
+        f"⏳ **Created:** {created_timestamp}\n"
         f"📈 **Market Cap:** ${market_cap_str}\n"
         f"🪣 **1 Hour Volume:** ${volume1h}\n"
         f"🔖 **Token Name:** {token_name}\n"
@@ -224,13 +229,15 @@ async def send_latest_coin(bot, coin, token_details):
     )
     logger.info(f"Sending message to channel {CHANNEL_ID}: {message_text}")
 
-    if int(created_ago) >= 3:
+    if is_older_than_3_days:
         await bot.send_message(
             chat_id=CHANNEL_ID,
             text=message_text,
             reply_markup=InlineKeyboardMarkup(keyboard_buttons),
             parse_mode='Markdown'
         )
+    else:
+        logger.info("Token did not meet criteria: Paid and >3 days old.")
 
 
 async def fetch_and_send_latest_coin(context: ContextTypes.DEFAULT_TYPE):
