@@ -20,8 +20,7 @@ dotenv.load_dotenv()
 BOT_TOKEN = os.environ.get('DEXYCHECKER_BOT_API')
 
 if not BOT_TOKEN:
-    raise ValueError("DEXYCHECKER_BOT_API is not set. Please set it as an environment variable."
-
+    raise ValueError("DEXYCHECKER_BOT_API is not set. Please set it as an environment variable.")
 # Base URL of the API
 BASE_URL = 'https://api.dexscreener.com/orders/v1/solana/'
 
@@ -63,43 +62,6 @@ def debug_log(func):
             logger.exception(f"Exception in function: {func_name} | Exception: {e}")
             raise e
     return wrapper
-
-# Function to create database connection pool
-@debug_log
-async def create_db_pool(application: Application):
-    max_retries = 5
-    retry_delay = 5  # seconds
-
-    for attempt in range(1, max_retries + 1):
-        try:
-            application.db_pool = await aiomysql.create_pool(
-                host=DB_HOST,
-                port=DB_PORT,
-                user=DB_USER,
-                password=DB_PASSWORD,
-                db=DB_NAME,
-                autocommit=True  # Enable autocommit
-            )
-            logger.info("Database pool created successfully.")
-            break  # Exit loop if successful
-        except Exception as e:
-            logger.error(f"Attempt {attempt} - Error creating database pool: {e}", exc_info=True)
-            if attempt == max_retries:
-                logger.critical("Max retries reached. Could not create database pool.")
-                raise e  # Re-raise exception after max retries
-            else:
-                logger.info(f"Retrying in {retry_delay} seconds...")
-                await asyncio.sleep(retry_delay)
-
-# Function to close database connection pool
-@debug_log
-async def close_db_pool(application: Application):
-    if hasattr(application, 'db_pool') and application.db_pool is not None:
-        application.db_pool.close()
-        await application.db_pool.wait_closed()
-        logger.info("Database pool closed successfully.")
-    else:
-        logger.info("Database pool was not created; skipping close.")
 
 def is_valid_pair_address(pair_address):
     is_valid = 35 <= len(pair_address) <= 50
@@ -651,8 +613,6 @@ def main():
     application = (
         Application.builder()
         .token(BOT_TOKEN)
-        .post_init(create_db_pool)
-        .post_shutdown(close_db_pool)
         .build()
     )
 

@@ -34,8 +34,7 @@ async def get_latest_coin(session: aiohttp.ClientSession):
     try:
         async with session.get(API_URL, timeout=10) as response:  # Added timeout
             if response.status != 200:
-                logger.error(f"Failed to fetch data, status code: {
-                             response.status}")
+                logger.error(f"Failed to fetch data, status code: {response.status}")
                 raise aiohttp.ClientError(f"Status code: {response.status}")
             data = await response.json()
             logger.debug(f"Received data: {data}")
@@ -89,8 +88,7 @@ async def fetch_token_details(session: aiohttp.ClientSession, token_address: str
                 data = await response.json()
                 pairs = data.get("pairs", [{}])[0]
                 created_at = pairs.get('pairCreatedAt', 0)
-                logger.debug(f"Fetched created_at: {
-                             created_at} for token {token_address}")
+                logger.debug(f"Fetched created_at: {created_at} for token {token_address}")
 
                 # Ensure created_at is a number
                 try:
@@ -104,8 +102,7 @@ async def fetch_token_details(session: aiohttp.ClientSession, token_address: str
                 if created_at > 0:
                     created_at = created_at / 1000  # Convert to seconds
                 else:
-                    logger.warning(f"created_at is zero or negative for token {
-                                   token_address}")
+                    logger.warning(f"created_at is zero or negative for token {token_address}")
 
                 # Extract volume data
                 volume_data = pairs.get('volume', {})
@@ -113,8 +110,7 @@ async def fetch_token_details(session: aiohttp.ClientSession, token_address: str
 
                 # Format and remove trailing .00 if not needed
                 if isinstance(volume1h, (int, float)):
-                    volume1h_str = "{:,.2f}".format(volume1h).rstrip('0').rstrip(
-                        '.') if '.' in "{:,.2f}".format(volume1h) else "{:,.2f}".format(volume1h)
+                    volume1h_str = "{:,.2f}".format(volume1h).rstrip('0').rstrip('.') if '.' in "{:,.2f}".format(volume1h) else "{:,.2f}".format(volume1h)
                 else:
                     volume1h_str = "0"
 
@@ -129,8 +125,7 @@ async def fetch_token_details(session: aiohttp.ClientSession, token_address: str
                     "dexId": pairs.get('dexId', '')
                 }
             else:
-                logger.warning(f"Failed to fetch details for token address: {
-                               token_address}")
+                logger.warning(f"Failed to fetch details for token address: {token_address}")
                 return {}
     except Exception as e:
         logger.error(f"Error fetching token details for {token_address}: {e}")
@@ -182,8 +177,7 @@ async def send_latest_coin(bot, coin, token_details):
     # Extract additional token details
     token_name = token_details.get('base_name', 'Unknown')
     market_cap = token_details.get('marketCap', 0)
-    market_cap_str = f"{market_cap:,}" if isinstance(
-        market_cap, (int, float)) else market_cap
+    market_cap_str = f"{market_cap:,}" if isinstance(market_cap, (int, float)) else market_cap
     volume1h = token_details.get('volume1h', '0')  # 1-hour volume
     boosts_active = token_details.get('boosts_active', 0)
     created_ago = get_time_ago(token_details.get('created_at', 0))
@@ -191,16 +185,12 @@ async def send_latest_coin(bot, coin, token_details):
     # Define the buttons without social links
     keyboard_buttons = [
         [
-            InlineKeyboardButton(
-                "🐎 Trojan", url=f"https://t.me/odysseus_trojanbot?start=r-___p88arl-{token_address}"),
-            InlineKeyboardButton(
-                "🐂 Bullx", url=f"https://bullx.io/terminal?chainId=1399811149&address={token_address}&r=SBUZGK2REY9")
+            InlineKeyboardButton("🐎 Trojan", url=f"https://t.me/odysseus_trojanbot?start=r-___p88arl-{token_address}"),
+            InlineKeyboardButton("🐂 Bullx", url=f"https://bullx.io/terminal?chainId=1399811149&address={token_address}&r=SBUZGK2REY9")
         ],
         [
-            InlineKeyboardButton(
-                "⚡ Photon", url=f"https://photon-sol.tinyastro.io/en/r/@dexyfun/{token_address}"),
-            InlineKeyboardButton(
-                "🐶 Bonk", url=f"https://t.me/bonkbot_bot?start=ref_glnhq_ca_{token_address}")
+            InlineKeyboardButton("⚡ Photon", url=f"https://photon-sol.tinyastro.io/en/r/@dexyfun/{token_address}"),
+            InlineKeyboardButton("🐶 Bonk", url=f"https://t.me/bonkbot_bot?start=ref_glnhq_ca_{token_address}")
         ]
     ]
 
@@ -219,8 +209,7 @@ async def send_latest_coin(bot, coin, token_details):
                 social_links_text += f"💬 **Telegram:** [Join]({link_url})\n"
             else:
                 link_type_cap = link_type.capitalize()
-                social_links_text += f"🔗 **{
-                    link_type_cap}:** [Link]({link_url})\n"
+                social_links_text += f"🔗 **{link_type_cap}:** [Link]({link_url})\n"
 
     # Format the message using Markdown for better readability
     message_text = (
@@ -267,8 +256,7 @@ async def fetch_and_send_latest_coin(context: ContextTypes.DEFAULT_TYPE):
         logger.error(f"An error occurred: {e}. Notifying admin.")
         await context.bot.send_message(
             chat_id=ADMIN_USER_ID,
-            text=f"⚠️ **Alert:** An error occurred while fetching the latest coin data: {
-                e}"
+            text=f"⚠️ **Alert:** An error occurred while fetching the latest coin data: {e}"
         )
 
 
@@ -276,8 +264,7 @@ async def dexy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     logger.info(f"/dexy command received from user_id: {user_id}")
     keyboard = [
-        [InlineKeyboardButton(
-            "Open DEXY BOT!", url="https://t.me/dexydexpaid_bot")]
+        [InlineKeyboardButton("Open DEXY BOT!", url="https://t.me/dexydexpaid_bot")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
