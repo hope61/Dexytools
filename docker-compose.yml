@@ -5,8 +5,6 @@ services:
       dockerfile: Dockerfile
     container_name: dexychecker_bot
     restart: always
-    depends_on:
-      - mysql
     environment:
       DEXYCHECKER_BOT_API: $DEXYCHECKER_BOT_API
     volumes:
