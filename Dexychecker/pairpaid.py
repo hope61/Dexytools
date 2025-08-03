@@ -492,19 +492,19 @@ async def monitor_status_changes(user_id, pair_address, context):
 
                 # Stop monitoring if no status change for 30 minutes
                 elapsed_time = now - last_change_time[user_id][pair_address]
-                if elapsed_time > timedelta(minutes=30):
+                if elapsed_time > timedelta(minutes=60):
                     status_with_emoji = f"{current_status} {get_status_emoji(current_status)}"
                     message_text = (
                         f"🕒 *Monitoring Stopped*\n\n"
                         f"**Contract Address:** `{original_pair_address}`\n"
                         f"**Last Status:** {status_with_emoji}\n\n"
-                        "🛑 *No status change detected for over 30 minutes.*"
+                        "🛑 *No status change detected for over 60 minutes.*"
                     )
                     await send_message_with_retry(context.bot, user_id, message_text)
                     logger.info(f"Stopped monitoring pair {original_pair_address} for user {user_id} due to inactivity.")
                     break
 
-                await asyncio.sleep(60)  # Check for status changes every 5 minutes (300 seconds)
+                await asyncio.sleep(60)  # Check for status changes every 1 minutes (60 seconds)
                 logger.debug(f"Sleeping for 5 minutes before next status check for pair {pair_address}.")
 
             except asyncio.CancelledError:
