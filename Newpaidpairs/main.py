@@ -219,7 +219,7 @@ async def send_latest_coin(bot, coin, token_details):
     # Format the message using Markdown for better readability
     message_text = (
         f"🔗 **Dexscreener:** [Visit Here]({url})\n"
-        f"⏳ **Created:** {created_timestamp}\n"
+        f"⏳ **Created:** {get_time_ago(created_timestamp)}\n"
         f"📈 **Market Cap:** ${market_cap_str}\n"
         f"🪣 **1 Hour Volume:** ${volume1h}\n"
         f"🔖 **Token Name:** {token_name}\n"
