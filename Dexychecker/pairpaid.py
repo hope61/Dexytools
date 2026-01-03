@@ -32,7 +32,6 @@ logging.basicConfig(
     level=logging.DEBUG,  # Set to DEBUG for more detailed logs
     format='%(asctime)s - %(levelname)s - %(name)s - [%(funcName)s:%(lineno)d] - %(message)s',
     handlers=[
-        logging.FileHandler("bot_debug.log"),  # Detailed log to a separate file
         logging.StreamHandler()                 # Also log to console
     ]
 )
