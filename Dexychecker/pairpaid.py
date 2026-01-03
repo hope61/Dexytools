@@ -82,16 +82,20 @@ async def get_pair_status(session, pair_address):
                 return "NOT PAID"
             data = await response.json()
             logger.debug(f"API response data for {pair_address}: {data}")
-            if not data:
-                logger.info(f"No data returned for Contract address {pair_address}")
+            if not data or 'orders' not in data or not data['orders']:
+                logger.info(f"No data or orders returned for Contract address {pair_address}")
                 return "NOT PAID"
-            status_info = data[0] if isinstance(data, list) else data
+            
+            # Extract status from the first order (assuming that's the relevant one)
+            status_info = data['orders'][0]
             status = status_info.get("status", "NOT PAID").upper()
-            # Change "approved" to "PAID"
+            
+            # Change "APPROVED" to "PAID" as before
             if status.lower() == "approved":
                 status = "PAID"
-        logger.info(f"Status for Contract address {pair_address}: {status}")
-        return status
+            
+            logger.info(f"Status for Contract address {pair_address}: {status}")
+            return status
     except Exception as e:
         logger.error(f"Error fetching status for Contract address {pair_address}: {e}", exc_info=True)
         return "FETCH FAILED"
